@@ -222,6 +222,64 @@
             justify-content: center;
             color: white;
             font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-thumbnail iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-player-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .video-player-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 900px;
+            max-height: 600px;
+            margin: auto;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .video-player-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .close-player {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .close-player:hover {
+            background: #f0f0f0;
         }
 
         .video-info {
@@ -356,53 +414,7 @@
                 </div>
 
                 <div class="video-grid" id="videoGrid">
-                    <div class="video-card" data-category="basics">
-                        <div class="video-thumbnail">▶️</div>
-                        <div class="video-info">
-                            <div class="video-title">מבוא לבינה מלאכותית</div>
-                            <div class="video-description">הכירו את המושגים הבסיסיים בתחום הבינה המלאכותית ולמדו על היסטוריה והתפתחות התחום.</div>
-                        </div>
-                    </div>
-
-                    <div class="video-card" data-category="tools">
-                        <div class="video-thumbnail">🤖</div>
-                        <div class="video-info">
-                            <div class="video-title">ChatGPT למתחילים</div>
-                            <div class="video-description">מדריך שלב אחר שלב לשימוש יעיל ב-ChatGPT, כולל טיפים וטריקים מתקדמים.</div>
-                        </div>
-                    </div>
-
-                    <div class="video-card" data-category="advanced">
-                        <div class="video-thumbnail">⚡</div>
-                        <div class="video-info">
-                            <div class="video-title">פרומפט אינג'ינירינג מתקדם</div>
-                            <div class="video-description">למדו כיצד לכתוב פרומפטים יעילים וליצור תוצאות מדוייקות ואיכותיות.</div>
-                        </div>
-                    </div>
-
-                    <div class="video-card" data-category="tools">
-                        <div class="video-thumbnail">🎨</div>
-                        <div class="video-info">
-                            <div class="video-title">יצירת תמונות עם AI</div>
-                            <div class="video-description">מדריך מקיף לכלי יצירת תמונות כמו DALL-E, Midjourney ו-Stable Diffusion.</div>
-                        </div>
-                    </div>
-
-                    <div class="video-card" data-category="basics">
-                        <div class="video-thumbnail">📚</div>
-                        <div class="video-info">
-                            <div class="video-title">מושגי יסוד במכונה למידה</div>
-                            <div class="video-description">הבנת המושגים הבסיסיים במכונה למידה וכיצד הם מיושמים בפועל.</div>
-                        </div>
-                    </div>
-
-                    <div class="video-card" data-category="advanced">
-                        <div class="video-thumbnail">🔧</div>
-                        <div class="video-info">
-                            <div class="video-title">אוטומציה עם AI</div>
-                            <div class="video-description">למדו כיצד לאטמט תהליכים עסקיים באמצעות כלי בינה מלאכותית מתקדמים.</div>
-                        </div>
-                    </div>
+                    <!-- Video cards will be loaded here -->
                 </div>
             </div>
 
@@ -444,12 +456,138 @@
                 </ul>
             </div>
         </div>
+
+        <!-- Video Player Modal -->
+        <div id="videoPlayerModal" class="video-player-modal">
+            <div class="video-player-content">
+                <button class="close-player" onclick="closeVideoPlayer()">×</button>
+                <iframe id="videoPlayerFrame" src="" allowfullscreen></iframe>
+            </div>
+        </div>
     </div>
 
     <script>
-        // User credentials (in a real application, this would be handled securely on the server)
+        // Videos database - Add your Google Drive video links here
+        const videosDatabase = [
+            {
+                id: 1,
+                title: "מבוא לבינה מלאכותית",
+                description: "הכירו את המושגים הבסיסיים בתחום הבינה המלאכותית ולמדו על היסטוריה והתפתחות התחום.",
+                category: "basics",
+                thumbnail: "▶️",
+                // Replace with your Google Drive file ID
+                driveId: "1ABC123xyz456",
+                duration: "15:30"
+            },
+            {
+                id: 2,
+                title: "ChatGPT למתחילים",
+                description: "מדריך שלב אחר שלב לשימוש יעיל ב-ChatGPT, כולל טיפים וטריקים מתקדמים.",
+                category: "tools",
+                thumbnail: "🤖",
+                driveId: "1DEF789abc123",
+                duration: "22:45"
+            },
+            {
+                id: 3,
+                title: "פרומפט אינג'ינירינג מתקדם",
+                description: "למדו כיצד לכתוב פרומפטים יעילים וליצור תוצאות מדוייקות ואיכותיות.",
+                category: "advanced",
+                thumbnail: "⚡",
+                driveId: "1GHI456def789",
+                duration: "28:15"
+            },
+            {
+                id: 4,
+                title: "יצירת תמונות עם AI",
+                description: "מדריך מקיף לכלי יצירת תמונות כמו DALL-E, Midjourney ו-Stable Diffusion.",
+                category: "tools",
+                thumbnail: "🎨",
+                driveId: "1JKL123ghi456",
+                duration: "19:30"
+            },
+            {
+                id: 5,
+                title: "מושגי יסוד במकונה למידה",
+                description: "הבנת המושגים הבסיסיים במכונה למידה וכיצד הם מיושמים בפועל.",
+                category: "basics",
+                thumbnail: "📚",
+                driveId: "1MNO789jkl123",
+                duration: "31:20"
+            },
+            {
+                id: 6,
+                title: "אוטומציה עם AI",
+                description: "למדו כיצד לאטמט תהליכים עסקיים באמצעות כלי בינה מלאכותית מתקדמים.",
+                category: "advanced",
+                thumbnail: "🔧",
+                driveId: "1PQR456mno789",
+                duration: "25:10"
+            }
+        ];
+
+        // Load videos on page load
+        function loadVideos() {
+            const videoGrid = document.getElementById('videoGrid');
+            videoGrid.innerHTML = '';
+            
+            videosDatabase.forEach(video => {
+                const videoCard = createVideoCard(video);
+                videoGrid.appendChild(videoCard);
+            });
+        }
+
+        // Create video card element
+        function createVideoCard(video) {
+            const card = document.createElement('div');
+            card.className = 'video-card';
+            card.setAttribute('data-category', video.category);
+            
+            card.innerHTML = `
+                <div class="video-thumbnail">
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 3rem;">
+                        ${video.thumbnail}
+                    </div>
+                    <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                        ${video.duration}
+                    </div>
+                </div>
+                <div class="video-info">
+                    <div class="video-title">${video.title}</div>
+                    <div class="video-description">${video.description}</div>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => openVideo(video.driveId, video.title));
+            return card;
+        }
+
+        // Open video in modal
+        function openVideo(driveId, title) {
+            if (!driveId || driveId.startsWith('1ABC')) {
+                alert('עדיין לא הוסף קישור וידאו אמיתי לסרטון: ' + title + '\n\nאנא עדכן את ה-driveId במסד הנתונים');
+                return;
+            }
+            
+            const videoUrl = `https://drive.google.com/file/d/${driveId}/preview`;
+            document.getElementById('videoPlayerFrame').src = videoUrl;
+            document.getElementById('videoPlayerModal').style.display = 'block';
+        }
+
+        // Close video player
+        function closeVideoPlayer() {
+            document.getElementById('videoPlayerModal').style.display = 'none';
+            document.getElementById('videoPlayerFrame').src = '';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('videoPlayerModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeVideoPlayer();
+            }
+        });
         const validCredentials = {
-            'admin': 'password123',
+            'admin': 'H291099n',
             'user1': 'mypass456',
             'demo': 'demo123'
         };
@@ -469,6 +607,9 @@
                 // Store login state
                 sessionStorage.setItem('isLoggedIn', 'true');
                 sessionStorage.setItem('username', username);
+                
+                // Load videos after successful login
+                loadVideos();
             } else {
                 // Failed login
                 document.getElementById('errorMessage').style.display = 'block';
@@ -482,6 +623,7 @@
         if (sessionStorage.getItem('isLoggedIn') === 'true') {
             document.getElementById('loginContainer').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
+            loadVideos(); // Load videos when already logged in
         }
 
         // Logout functionality
@@ -525,13 +667,7 @@
             });
         }
 
-        // Add click events to video cards
-        document.querySelectorAll('.video-card').forEach(card => {
-            card.addEventListener('click', function() {
-                const title = this.querySelector('.video-title').textContent;
-                alert('פותח סרטון: ' + title + '\n\n(בגרסה מלאה, כאן יהיה קישור לסרטון או נגן מובנה)');
-            });
-        });
+        // Add click events to video cards - removed as now handled in createVideoCard function
     </script>
 </body>
 </html>
