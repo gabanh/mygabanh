@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מרכז הדרכות בינה מלאכותית</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        /* Login Form */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-form h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* Main Content (Hidden initially) */
+        .main-content {
+            display: none;
+        }
+
+        .nav-menu {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            background: rgba(231, 76, 60, 0.8);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(231, 76, 60, 1);
+            transform: translateY(-2px);
+        }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .video-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .video-info {
+            padding: 20px;
+        }
+
+        .video-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .video-description {
+            color: #666;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .category-tab {
+            padding: 12px 24px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .category-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .category-tab:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-menu {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                justify-content: center;
+            }
+            
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🤖 מרכז הדרכות בינה מלאכותית</h1>
+            <p>למד את עתיד הטכנולוגיה עם המדריכים המובילים</p>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginContainer" class="login-container">
+            <div class="login-form">
+                <h2>כניסה למערכת</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">שם משתמש:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">סיסמה:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="login-btn">התחבר</button>
+                    <div id="errorMessage" class="error-message">
+                        שם משתמש או סיסמה שגויים
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent" class="main-content">
+            <!-- Navigation -->
+            <div class="nav-menu">
+                <div class="nav-links">
+                    <a href="#" onclick="showSection('home')">בית</a>
+                    <a href="#" onclick="showSection('videos')">ספריית סרטונים</a>
+                    <a href="#" onclick="showSection('about')">אודות</a>
+                    <a href="#" onclick="showSection('contact')">צור קשר</a>
+                </div>
+                <button class="logout-btn" onclick="logout()">התנתק</button>
+            </div>
+
+            <!-- Home Section -->
+            <div id="homeSection" class="content-section">
+                <h2>ברוכים הבאים למרכז הדרכות הבינה המלאכותית</h2>
+                <p>כאן תמצאו מגוון רחב של סרטוני הדרכה מתקדמים בתחום הבינה המלאכותית. המדריכים שלנו יובילו אתכם צעד אחר צעד דרך העולם המרתק של AI, מבסיסי המושגים ועד לטכנולוgiות המתקדמות ביותר.</p>
+                
+                <h3 style="margin-top: 30px; margin-bottom: 15px;">מה תמצאו באתר:</h3>
+                <ul style="line-height: 2; margin-right: 20px;">
+                    <li>סרטוני הדרכה מקצועיים ואיכותיים</li>
+                    <li>תוכן מעודכן ורלוונטי לשוק העבודה</li>
+                    <li>דוגמאות מעשיות ופרויקטים מובנים</li>
+                    <li>מדריכים מתקדמים לכלי AI פופולריים</li>
+                </ul>
+            </div>
+
+            <!-- Videos Section -->
+            <div id="videosSection" class="content-section" style="display: none;">
+                <h2>ספריית הסרטונים</h2>
+                
+                <div class="category-tabs">
+                    <div class="category-tab active" onclick="filterVideos('all')">הכל</div>
+                    <div class="category-tab" onclick="filterVideos('basics')">יסודות AI</div>
+                    <div class="category-tab" onclick="filterVideos('tools')">כלים</div>
+                    <div class="category-tab" onclick="filterVideos('advanced')">מתקדם</div>
+                </div>
+
+                <div class="video-grid" id="videoGrid">
+                    <div class="video-card" data-category="basics">
+                        <div class="video-thumbnail">▶️</div>
+                        <div class="video-info">
+                            <div class="video-title">מבוא לבינה מלאכותית</div>
+                            <div class="video-description">הכירו את המושגים הבסיסיים בתחום הבינה המלאכותית ולמדו על היסטוריה והתפתחות התחום.</div>
+                        </div>
+                    </div>
+
+                    <div class="video-card" data-category="tools">
+                        <div class="video-thumbnail">🤖</div>
+                        <div class="video-info">
+                            <div class="video-title">ChatGPT למתחילים</div>
+                            <div class="video-description">מדריך שלב אחר שלב לשימוש יעיל ב-ChatGPT, כולל טיפים וטריקים מתקדמים.</div>
+                        </div>
+                    </div>
+
+                    <div class="video-card" data-category="advanced">
+                        <div class="video-thumbnail">⚡</div>
+                        <div class="video-info">
+                            <div class="video-title">פרומפט אינג'ינירינג מתקדם</div>
+                            <div class="video-description">למדו כיצד לכתוב פרומפטים יעילים וליצור תוצאות מדוייקות ואיכותיות.</div>
+                        </div>
+                    </div>
+
+                    <div class="video-card" data-category="tools">
+                        <div class="video-thumbnail">🎨</div>
+                        <div class="video-info">
+                            <div class="video-title">יצירת תמונות עם AI</div>
+                            <div class="video-description">מדריך מקיף לכלי יצירת תמונות כמו DALL-E, Midjourney ו-Stable Diffusion.</div>
+                        </div>
+                    </div>
+
+                    <div class="video-card" data-category="basics">
+                        <div class="video-thumbnail">📚</div>
+                        <div class="video-info">
+                            <div class="video-title">מושגי יסוד במכונה למידה</div>
+                            <div class="video-description">הבנת המושגים הבסיסיים במכונה למידה וכיצד הם מיושמים בפועל.</div>
+                        </div>
+                    </div>
+
+                    <div class="video-card" data-category="advanced">
+                        <div class="video-thumbnail">🔧</div>
+                        <div class="video-info">
+                            <div class="video-title">אוטומציה עם AI</div>
+                            <div class="video-description">למדו כיצד לאטמט תהליכים עסקיים באמצעות כלי בינה מלאכותית מתקדמים.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Section -->
+            <div id="aboutSection" class="content-section" style="display: none;">
+                <h2>אודות</h2>
+                <p>ברוכים הבאים לפלטפורמת ההדרכה המובילה בישראל לתחום הבינה המלאכותית. אנו מספקים תוכן איכותי ומקצועי שנועד להוביל אתכם בצעדים הראשונים וגם המתקדמים בעולם ה-AI.</p>
+                
+                <h3 style="margin-top: 25px; margin-bottom: 15px;">המטרה שלנו:</h3>
+                <p>להנגיש את תחום הבינה המלאכותית לכל אחד ואחת, ללא קשר לרקע הטכני. אנו מאמינים שבינה מלאכותית היא לא רק עבור מתכנתים ומדענים, אלא כלי חזק שיכול לשפר את חיי היומיום והקריירה של כל אחד.</p>
+                
+                <h3 style="margin-top: 25px; margin-bottom: 15px;">הגישה שלנו:</h3>
+                <ul style="line-height: 2; margin-right: 20px;">
+                    <li>הסברים פשוטים וברורים</li>
+                    <li>דוגמאות מעשיות מהחיים האמיתיים</li>
+                    <li>תרגול מעשי על כלים אמיתיים</li>
+                    <li>עדכון תוכן רציף בהתאם להתפתחויות בתחום</li>
+                </ul>
+            </div>
+
+            <!-- Contact Section -->
+            <div id="contactSection" class="content-section" style="display: none;">
+                <h2>צור קשר</h2>
+                <p>יש לכם שאלות? רוצים להציע נושא לסרטון חדש? אנחנו כאן בשבילכם!</p>
+                
+                <div style="margin-top: 30px; line-height: 2;">
+                    <p><strong>📧 אימייל:</strong> info@ai-training.co.il</p>
+                    <p><strong>💬 טלגרם:</strong> @ai_training_il</p>
+                    <p><strong>📱 וואטסאפ:</strong> 050-1234567</p>
+                    <p><strong>🌐 אתר:</strong> www.ai-training.co.il</p>
+                </div>
+                
+                <h3 style="margin-top: 30px; margin-bottom: 15px;">נושאים שנשמח לקבל עליהם פניות:</h3>
+                <ul style="line-height: 2; margin-right: 20px;">
+                    <li>בקשות לסרטוני הדרכה על נושאים ספציפיים</li>
+                    <li>שאלות טכניות בתחום ה-AI</li>
+                    <li>הצעות לשיתופי פעולה</li>
+                    <li>משוב על התוכן הקיים</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User credentials (in a real application, this would be handled securely on the server)
+        const validCredentials = {
+            'admin': 'password123',
+            'user1': 'mypass456',
+            'demo': 'demo123'
+        };
+
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (validCredentials[username] && validCredentials[username] === password) {
+                // Successful login
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                
+                // Store login state
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('username', username);
+            } else {
+                // Failed login
+                document.getElementById('errorMessage').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('errorMessage').style.display = 'none';
+                }, 3000);
+            }
+        });
+
+        // Check if user is already logged in
+        if (sessionStorage.getItem('isLoggedIn') === 'true') {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        }
+
+        // Logout functionality
+        function logout() {
+            sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('username');
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Section navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            const sections = ['homeSection', 'videosSection', 'aboutSection', 'contactSection'];
+            sections.forEach(section => {
+                document.getElementById(section).style.display = 'none';
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName + 'Section').style.display = 'block';
+        }
+
+        // Video filtering
+        function filterVideos(category) {
+            const cards = document.querySelectorAll('.video-card');
+            const tabs = document.querySelectorAll('.category-tab');
+            
+            // Update active tab
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter videos
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Add click events to video cards
+        document.querySelectorAll('.video-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.video-title').textContent;
+                alert('פותח סרטון: ' + title + '\n\n(בגרסה מלאה, כאן יהיה קישור לסרטון או נגן מובנה)');
+            });
+        });
+    </script>
+</body>
+</html>
