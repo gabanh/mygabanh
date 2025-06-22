@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار محوسب: فهم النصوص العربية</title>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
+    <style>
+        /* General styles */
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            direction: rtl; /* Ensure RTL direction for the whole body */
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header styles */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        /* Student Info styles */
+        .student-info {
+            background-color: #e8f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-right: 5px solid #3498db; /* Changed to right for RTL */
+        }
+        .student-info label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        .student-info input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            margin-bottom: 15px;
+        }
+        .student-info input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        /* Tabs styles */
+        .tabs {
+            display: flex;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 15px 0;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: #7f8c8d;
+            transition: all 0.3s;
+            min-width: 150px;
+        }
+        .tab-btn:hover {
+            background-color: #d6dbdf;
+        }
+        .tab-btn.active {
+            background-color: #3498db;
+            color: white;
+        }
+
+        /* Tab Content styles */
+        .tab-content {
+            display: none;
+            padding: 25px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e0e7ee;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .text-content {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #2c3e50;
+        }
+        .text-content h3 {
+            color: #2980b9;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 25px;
+            display: flex; /* To align button next to text */
+            align-items: center;
+            justify-content: space-between; /* Space out title and button */
+        }
+        .text-content p {
+            margin: 15px 0;
+            text-align: justify;
+        }
+        .text-content ol {
+            padding-right: 20px; /* Adjust for RTL lists */
+        }
+        .text-content li {
+            margin-bottom: 10px;
+        }
+
+        /* Questions styles */
+        .question-container {
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border-right: 4px solid #3498db; /* Changed to right for RTL */
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        .question-container h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .options {
+            margin-right: 20px; /* Adjust for RTL options indentation */
+        }
+        .option {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid #e0e7ee;
+        }
+        .option:hover {
+            background-color: #e8f4f8;
+            border-color: #3498db;
+        }
+        .option.selected {
+            background-color: #d6eaf8;
+            border-color: #3498db;
+            font-weight: bold;
+        }
+        /* Styles for correct/incorrect answers in practice questions */
+        .option.correct-answer {
+            background-color: #e6ffe6; /* Light green */
+            border-color: #27ae60; /* Green */
+        }
+        .option.incorrect-answer {
+            background-color: #ffe6e6; /* Light red */
+            border-color: #e74c3c; /* Red */
+        }
+
+
+        /* Submit and Result styles */
+        .submit-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.6);
+        }
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #e8f4f8 0%, #d6eaf8 100%);
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+        .result-container h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 20px 0;
+        }
+        .feedback {
+            font-size: 1.2rem;
+            margin: 20px 0;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.6);
+        }
+
+        /* Send Email section styles */
+        .send-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #e0e7ee;
+        }
+        .send-section h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            text-align: center;
+        }
+        .teacher-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .teacher-info input, .teacher-info select {
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100%; /* Ensure full width */
+        }
+        .send-btn {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
+        }
+        .send-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(155, 89, 182, 0.6);
+        }
+        .send-status {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            display: none;
+        }
+        .send-success {
+            color: #27ae60;
+        }
+        .send-error {
+            color: #e74c3c;
+        }
+
+        /* Footer styles */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        /* LLM Feature Buttons */
+        .llm-feature-btn {
+            background-color: #8e44ad; /* Purple */
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            margin-right: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .llm-feature-btn:hover {
+            background-color: #9b59b6;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+        .llm-feature-btn:active {
+            transform: translateY(0);
+        }
+        /* Practice Question Button Specific Style */
+        .generate-practice-btn {
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); /* Orange gradient */
+            margin-top: 20px;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+        }
+        .generate-practice-btn:hover {
+            box-shadow: 0 5px 15px rgba(230, 126, 34, 0.4);
+        }
+        .generate-practice-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: left; /* Adjusted for RTL */
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #summaryContent {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            text-align: justify;
+            line-height: 1.6;
+        }
+        #summaryLoading {
+            text-align: center;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .text-content {
+                font-size: 16px;
+            }
+            .tab-btn {
+                min-width: unset; /* Allow buttons to shrink */
+                width: 100%; /* Full width for better tap targets on small screens */
+                margin-bottom: 5px; /* Add some spacing between stacked buttons */
+            }
+            .tabs {
+                flex-direction: column; /* Stack tabs vertically on small screens */
+            }
+            .text-content h3 {
+                flex-direction: column; /* Stack title and button vertically */
+                align-items: flex-start; /* Align title to right in RTL */
+            }
+            .llm-feature-btn {
+                margin-top: 10px; /* Space out button from title when stacked */
+                margin-right: 0; /* Remove right margin */
+                width: 100%;
+            }
+            .modal-content {
+                width: 95%; /* Adjust modal width for small screens */
+                margin: 10% auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>اختبار محوسب: فهم النصوص العربية</h1>
+            <p>اختبار مكون من 20 سؤالاً حول النصوص المقدمة</p>
+        </div>
+
+        <div class="student-info">
+            <label for="student-name">اسم الطالب:</label>
+            <input type="text" id="student-name" placeholder="أدخل اسمك الكامل هنا">
+            
+            <label for="student-id">رقم الطالب/المعرف:</label>
+            <input type="text" id="student-id" placeholder="أدخل رقم الطالب أو المعرف">
+            
+            <label for="student-email">البريد الإلكتروني للطالب (اختياري):</label>
+            <input type="email" id="student-email" placeholder="example@email.com">
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="text1">الفصل الأول: الرجل والحصان</button>
+            <button class="tab-btn" data-tab="text2">الفصل الثاني: النوم</button>
+            <button class="tab-btn" data-tab="text3">الفصل الثالث: إطالة عمر الزهور</button>
+        </div>
+
+        <div id="text1" class="tab-content active">
+            <div class="text-content">
+                <h3>
+                    الفصل الأول: الرجل والحصان
+                    <button class="llm-feature-btn" onclick="handleGenerateSummary('text1')">✨ تلخيص النص ✨</button>
+                </h3>
+                <p id="text1-content-p1">كان يا ما كان في قديم الزمان حصان يعيش في البراري والحقول سعيدًا بحريته: يرعى العشب الأخضر فيشبع، ويشرب الماء العذب فيرتوي، ويعدو مفتخرًا بسرعته، ويصهل مرفوعًا بصوته.</p>
+                <p id="text1-content-p2">في إحدى السنوات انحبس المطر، فجف العشب، وصارت الأرض جرداء فتضور الحصان. مر رجل من هناك فشاهد الحصان متضورًا.</p>
+                <p id="text1-content-p3">فقال له: ليتك تأتي معي إلى بيتي، فتعيش في إسطبل نظيف! أطعمك الشعير فتشبع، وأغطيك بالغطاء الدافئ، وأدرجك كي تشترك في سباقات الخيل التي تجري في الميدان، وأزين رأسك بالريش، وعنقك بعقود الخرز الملوّن، ويتجمّع الناس حولك معجبين بشكلك.</p>
+                <p id="text1-content-p4">سأل الحصان: وماذا أقدّم لك في المقابل؟ قال له الرجل: أركبك في نزهاتي وزياراتي! فلا أرهقك، ولا أعتبك. عندما سمع الحصان هذا الكلام وافق على عرض الرجل وتبعه إلى بيته. ولما وصلا، ربط الرجل الحصان في الإسطبل مع حمار وثور، وصار كلّ مساء يضع لجامًا في فمه ورباطًا حول عنقه ويزرجه بمزركتشة على ظهره، ثم يركبه ويقوم بنزهة في المدينة.</p>
+                <p id="text1-content-p5">لم يمض شهرٌ واحدٌ حتى ضاق الحصان ذرعًا بحياته الجديدة، وشعر أنّه فقد حريته. ازداد إحساسه هذا حين بدأ الرجل يعامله معاملةً قاسيةً، فيجبره على جر العربات الثقيلة، ويحرمه من الطعام إذا أبطأ أو قصر في عمله.</p>
+                <p id="text1-content-p6">في المساء، احتجّ الحصان أمام صاحبه على هذا العمل المرهق، وهذه المعاملة السيّئة، وقال له: لم تذكر لي يومًا أنني سوف أعمل وأعاقب إن لم أعمل! فلماذا تفعل بي ذلك؟ سأتركك وأعود إلى حريتي في الحقول! ضحك الرجل وقال: لقد وافقت على المجيء معي ولن تستطيع الإفلات من قبضتي الآن.</p>
+                <p id="text1-content-p7">صمّم الحصان على استعادة حريته مهما كان ذلك من ثمن. بدأ يصهل في الليل صهيلاً متواصلاً أزعج الناس في الجوار وحرمهم من النوم، فقابله الرجل بأن زاد له ساعات العمل. لكنّ الحصان امتنع عن تناول الطعام عدّة أيام، فنزل الرجل إلى الإسطبل ليخبره بأنه لا فائدة من تصرّفه هذا، وخيّره أن يعمل ما يطلبه منه دون تمرد أو عناد.</p>
+                <p id="text1-content-p8">ذات يوم ذهب الرجل إلى الإسطبل ليأخذ الحصان إلى العمل كعادته، لكنّه وجد الباب مفتوحًا والإسطبل خاليًا من أيّ حيوان...</p>
+            </div>
+        </div>
+
+        <div id="text2" class="tab-content">
+            <div class="text-content">
+                <h3>
+                    الفصل الثاني: النوم
+                    <button class="llm-feature-btn" onclick="handleGenerateSummary('text2')">✨ تلخيص النص ✨</button>
+                </h3>
+                <p id="text2-content-p1">يقضي الطفل أكثر من نصف وقته نائمًا، بينما نقضي نحن الكبار حوالي 8 ساعات يوميًّا في النوم، أي ما يعادل ثلث حياتنا تقريبًا. فإذا افترضنا أنّ معدل عمر الإنسان 75 عامًا، كما هو الحال في الدول المتقدمة فإنّ متوسّط ما يقضيه الفرد في النوم حوالي 25 عامًا، أي ربع قرن. هذه السنوات ليست عمرًا ضائعًا كما يبدو للوهلة الأولى، فالنوم إحدى الحاجات الجسديّة الهامّة للإنسان مثلّ الطعام والشراب.</p>
+                <p id="text2-content-p2">تختلف كميّة النوم التي يحتاجها الفرد باختلاف العمر. الطفل في أشهره الأولى ينام حوالي 18-17 ساعةً في اليوم، وفي عمر خمس سنوات ينام الطفل 12-10 ساعةً يوميًّا، أمّا الشخص البالغ فيحتاج إلى حوالي 8 ساعاتٍ من النوم حتى يستطيع العمل بكفاءةٍ ونشاطٍ خلال النهار.</p>
+                <p id="text2-content-p3">من أهمّ فوائد النوم أنّه يعطي المخّ والعضلات فرصةً للراحة والتعافي من تعبّ يوم طويل وشاقٍ، ويساعد على النمو ويحافظ على الذاكرة ويقويها كما أثبت العلماء في كثير من التجارب الهامّة. وقد أوضحت هذه التجارب ذلك بصورة واضحة حيث تمّ تدريب مجموعة من الأفراد للتعرف على الحروف التي تظهر على شاشة الكمبيوتر، وتختفي في طرفة عين. بعد ذلك تمّ إرسال نصف هؤلاء الأشخاص للنوم في منازلهم، بينما بقي النصف الآخر ساهرًا. بعد يومين، حينما تأكد العلماء أن جميع الأفراد نالوا قسطًا كافيًا من الراحة والنوم، تم اختبارهم على نفس الحروف التي تدربوا عليها سابقًا، فلاحظوا أن الأفراد الذين ذهبوا للنوم مباشرة بعد التدريب كانوا أفضل من زملائهم الذين قضوا الليل ساهرين بعد التدريب.</p>
+                <p id="text2-content-p4">استنتج العلماء بعد ذلك أن النوم له دور كبير في اكتساب الخبرات والمعلومات وتثبيتها. من هنا، يجب عليك أيها الطالب، قبل أن تذهب إلى الامتحان أن تعرف أن الساعات التي تقضيها في النوم بعد الدراسة لا تقل أهمية عن ساعات الدراسة نفسها، خصوصًا وأن التجارب أوضحت أيضًا أن قلة النوم تؤدي إلى ضعف القدرة على حل المسائل الرياضية، وإلى ضعف المهارات اللغوية، بالإضافة إلى قلة التركيز والانتباه. كما أن نقص ساعتين من النوم يكفي لأن تحدث الآثار السلبية، خاصة إذا تكرر عدة أيام.</p>
+            </div>
+        </div>
+
+        <div id="text3" class="tab-content">
+            <div class="text-content">
+                <h3>
+                    الفصل الثالث: كيف تطيل عمر باقات الزهور؟
+                    <button class="llm-feature-btn" onclick="handleGenerateSummary('text3')">✨ تلخيص النص ✨</button>
+                </h3>
+                <p id="text3-content-p1">هناك عدد من الوصفات يتناقلها الناس لإطالة عمر الزهرة. هذه الوصفات لا يقبلها علماء النبات اليوم، لأن بعضها خاطئ وحقائقها غير كاملة، كما أنها ليست مثبتة علميًا.</p>
+                <p id="text3-content-p2">مقابل ذلك يلخص لنا علماء النبات المعلومات التي أثبت العلم فائدتها في حفظ باقات الزهور، ويتضمن الإرشادات التالية:</p>
+                <ol>
+                    <li>احرص على أن تختار زهرة متألقة اللون غير ذابلة. يجب أن تكون غير متفتحة بالكامل. وبشكل عام ينبغي أن يكون منظر الزهرة على ساقها.</li>
+                    <li>عندما تتسلم الزهور ضعها في مكان رطب وبارد، ورش عليها الماء قبل أن تضعها في الإناء المعد لها؛ لأن هذا يساعدها أن تحافظ على رطوبتها.</li>
+                    <li>اقطع مقدار 2 سم من ساق الزهرة بشكل مائل بسكين حاد أو بمقص نظيف لكي يتسع الساق على طرف القصبة ويبقى المجال مفتوحًا لتسرّب الماء.</li>
+                    <li>قبل أن تضع الزهرة في ماء الإناء، احرص على تجريد الساق من الأوراق في القسم الأسفل الذي سيغطس في الماء، وإبقاء الأوراق في القسم الأعلى الذي سيبقى فوق الماء. ذلك لأنّ الأوراق إذا غمرها الماء سوف تتعفن، وتسرع انتشار الميكروبات مما يزيد تلوث الماء وفساد الزهرة.</li>
+                    <li>عليك أن تحافظ على مستوى الماء في الإناء لأن له أهمية كبيرة للزهرة، إذ إنها تتشرّب من ساقها الأسفل فليس ضروريًا أن يصل مستوى الماء إلى أعلى الإناء.</li>
+                    <li>استعمل المياه التي تم تبريدها إلى حدود 20 درجة مئوية، بعد أن تهبط حرارتها. المياه المبردة قابلة لامتصاص بسهولة أكثر من مياه الحنفية.</li>
+                    <li>احرص بتغيير المياه من وقت إلى آخر بعد تنظيف الإناء.</li>
+                    <li>احرص دائمًا على تنقية الباقة من الزهور الذابلة التي ستصيب الزهور الأخرى بالعدوى إذا بقيت إلى جانبها.</li>
+                    <li>الزهور نباتات حساسة، لذلك عليك أن تحميها من أشعة الشمس المباشرة والبرد الشديد والحرارة القوية وتجنبها عن التيارات الهوائية والجو الملوث بالدخان والتغيرات المفاجئة في درجة الحرارة.</li>
+                    <li>استعمل المستحضرات العلمية لحفظ الزهور، وتجنب الوصفات التقليدية التي يتناقلها الناس لحفظها كوضع قطع من السكر لتغذية الزهرة أو قطع الثلج في الإناء.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div id="questions-container">
+            <!-- سيتم إضافة الأسئلة هنا عن طريق JavaScript -->
+        </div>
+
+        <!-- Section for Practice Question -->
+        <div class="submit-section">
+            <button class="submit-btn generate-practice-btn" onclick="promptForPracticeQuestionChapter()">✨ توليد سؤال تدريبي جديد ✨</button>
+        </div>
+        <div id="practice-question-container" class="question-container" style="display: none;">
+            <!-- Practice question will be displayed here -->
+        </div>
+
+        <div class="submit-section">
+            <button class="submit-btn" id="submit-test-btn">تقديم الإجابات</button>
+        </div>
+
+        <div class="result-container" id="result-container">
+            <!-- سيتم عرض النتائج هنا -->
+        </div>
+
+        <div class="footer">
+            <p>اختبار فهم النصوص العربية - جميع الحقوق محفوظة &copy; 2023</p>
+        </div>
+    </div>
+
+    <!-- Modal Structure for Summary -->
+    <div id="summaryModal" class="modal">
+        <div class="modal-content">
+            <span id="closeSummaryModal" class="close-button">&times;</span>
+            <h2 style="color: #2c3e50; text-align: center;">ملخص النص ✨</h2>
+            <div id="summaryContent">
+                <p id="summaryLoading" style="text-align: center; color: #7f8c8d;"></p>
+                <!-- Summary will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * شرح بسيط: كيف تصل النتيجة إلى بريد المعلم؟
+         *
+         * تخيل أن الموقع لديه "ساعي بريد" خاص به (وهو خدمة EmailJS).
+         * عندما تضغط على زر "إرسال النتيجة"، يقوم الموقع بما يلي:
+         *
+         * 1. يجمع كل معلوماتك: اسمك، رقمك، درجتك في الاختبار، وغيرها.
+         * 2. يسلم هذه المعلومات إلى "ساعي البريد" (EmailJS).
+         * 3. يخبر ساعي البريد: "أرسل هذه المعلومات إلى بريد المعلم (الذي تم اختياره أو إدخاله)".
+         * 4. ساعي البريد لديه "قالب رسالة" جاهز. هذا القالب هو شكل ثابت لرسالة البريد الإلكتروني، لكن به فراغات لملء اسم الطالب والدرجة وهكذا.
+         * 5. يقوم ساعي البريد بملء هذه الفراغات بالمعلومات التي جمعها، ثم يرسل البريد الإلكتروني مباشرة إلى بريد المعلم.
+         *
+         * كل هذا يحدث دون أن يحتاج الموقع لخادم خاص به لإرسال الإيميلات، مما يجعله بسيطًا وسريعًا.
+         */
+
+        // تعريف المتغيرات (أسئلة الاختبار)
+        const questions = [
+            // أسئلة الفصل الأول: الرجل والحصان (7 أسئلة)
+            {
+                question: "ما الذي كان يفعله الحصان في البراري والحقول؟",
+                options: [
+                    "يرعى العشب ويشرب الماء ويعدو",
+                    "يعمل في جر العربات",
+                    "ينام طوال النهار",
+                    "يساعد الرجل في أعماله"
+                ],
+                answer: 0,
+                chapter: 1
+            },
+            {
+                question: "لماذا تغيرت حياة الحصان؟",
+                options: [
+                    "انحبس المطر وجف العشب",
+                    "أصبح كبيرًا في السن",
+                    "قرر البحث عن صديق",
+                    "أراد المشاركة في السباقات"
+                ],
+                answer: 0,
+                chapter: 1
+            },
+            {
+                question: "ما الذي عرضه الرجل على الحصان؟",
+                options: [
+                    "العيش في إسطبل نظيف والمشاركة في السباقات",
+                    "السفر إلى بلاد بعيدة",
+                    "العمل في المزارع",
+                    "الرعي مع الخيول الأخرى"
+                ],
+                answer: 0,
+                chapter: 1
+            },
+            {
+                question: "ما كان الشرط الذي وضعه الرجل للحصان مقابل العيش معه؟",
+                options: [
+                    "أن يركبه في نزهاته وزياراته",
+                    "أن يعمل في جر العربات",
+                    "أن يتنازل عن حريته للأبد",
+                    "أن يدفع له مالاً"
+                ],
+                answer: 0,
+                chapter: 1
+            },
+            {
+                question: "كيف شعر الحصان بعد مضى شهر في بيت الرجل؟",
+                options: [
+                    "ضاق ذرعًا بحياته الجديدة وفقد حريته",
+                    "سعيد جدًا بحياته الجديدة",
+                    "غير مبالٍ بالتغيير",
+                    "ممتن للرجل على معاملته"
+                ],
+                answer: 0,
+                chapter: 1
+            },
+            {
+                question: "كيف احتج الحصان على معاملة الرجل؟",
+                options: [
+                    "صهل في الليل وأزعج الجوار ثم امتنع عن الطعام",
+                    "هرب مباشرة دون محاولة احتجاج",
+                    "هاجم الرجل وعضه",
+                    "بدأ يعمل ببطء متعمدًا"
+                ],
+                answer: 0,
+                chapter: 1
+            },
+            {
+                question: "كيف انتهت القصة؟",
+                options: [
+                    "هرب الحصان وعاد إلى الحقول",
+                    "استسلم الحصان وبقي مع الرجل",
+                    "أصبح الحصان صديقًا للرجل",
+                    "مات الحصان من الإرهاق"
+                ],
+                answer: 0,
+                chapter: 1
+            },
+            
+            // أسئلة الفصل الثاني: النوم (7 أسئلة)
+            {
+                question: "كم ساعة ينام الشخص البالغ يوميًا في المتوسط؟",
+                options: [
+                    "8 ساعات",
+                    "10 ساعات",
+                    "6 ساعات",
+                    "12 ساعة"
+                ],
+                answer: 0,
+                chapter: 2
+            },
+            {
+                question: "ما عدد ساعات النوم التي يحتاجها الطفل في عمر خمس سنوات؟",
+                options: [
+                    "10-12 ساعة",
+                    "8-10 ساعات",
+                    "12-14 ساعة",
+                    "6-8 ساعات"
+                ],
+                answer: 0,
+                chapter: 2
+            },
+            {
+                question: "ما إحدى أهم فوائد النوم المذكورة في النص؟",
+                options: [
+                    "إعطاء المخ والعضلات فرصة للراحة والتعافي",
+                    "زيادة الوزن",
+                    "تقليل الشهية",
+                    "زيادة الطاقة للعمل الليلي"
+                ],
+                answer: 0,
+                chapter: 2
+            },
+            {
+                question: "ما الذي أثبتته تجربة التعرف على الحروف؟",
+                options: [
+                    "أن الأفراد الذين ناموا بعد التدريب كان أداؤهم أفضل",
+                    "أن السهر يحسن الذاكرة",
+                    "أن النوم لا يؤثر على التعلم",
+                    "أن الكافيين يحسن الأداء بعد النوم"
+                ],
+                answer: 0,
+                chapter: 2
+            },
+            {
+                question: "ما النصيحة المقدمة للطالب قبل الامتحان؟",
+                options: [
+                    "النوم بعد الدراسة لا يقل أهمية عن الدراسة نفسها",
+                    "السهر طوال الليل للدراسة",
+                    "تناول المنبهات لزيادة التركيز",
+                    "التوقف عن النوم قبل الامتحان بأسبوع"
+                ],
+                answer: 0,
+                chapter: 2
+            },
+            {
+                question: "ما تأثير قلة النوم حسب النص؟",
+                options: [
+                    "ضعف القدرة على حل المسائل الرياضية وضعف المهارات اللغوية",
+                    "زيادة الإبداع والابتكار",
+                    "تحسين الأداء البدني",
+                    "زيادة التركيز والانتباه"
+                ],
+                answer: 0,
+                chapter: 2
+            },
+            {
+                question: "ما المدة التي تكفي لحدوث آثار سلبية حسب النص؟",
+                options: [
+                    "نقص ساعتين من النوم إذا تكرر عدة أيام",
+                    "نصف ساعة نقص في ليلة واحدة",
+                    "زيادة ساعة نوم عن المعتاد",
+                    "النوم متأخرًا لمدة أسبوع"
+                ],
+                answer: 0,
+                chapter: 2
+            },
+            
+            // أسئلة الفصل الثالث: إطالة عمر الزهور (6 أسئلة)
+            {
+                question: "ما موقف علماء النبات من الوصفات التقليدية لحفظ الزهور؟",
+                options: [
+                    "لا يقبلونها لأنها غير مثبتة علميًا",
+                    "يشجعون استخدامها دائمًا",
+                    "يعتبرونها أفضل من الطرق العلمية",
+                    "يقترحون تطويرها فقط"
+                ],
+                answer: 0,
+                chapter: 3
+            },
+            {
+                question: "ما الشرط الذي يجب مراعاته عند اختيار الزهور؟",
+                options: [
+                    "أن تكون متألقة اللون وغير ذابلة وغير متفتحة بالكامل",
+                    "أن تكون متفتحة بالكامل وذابلة قليلاً",
+                    "أن تكون باهتة اللون وطويلة الساق",
+                    "أن تكون صغيرة الحجم فقط"
+                ],
+                answer: 0,
+                chapter: 3
+            },
+            {
+                question: "كيف يجب قطع ساق الزهرة؟",
+                options: [
+                    "بشكل مائل بسكين حاد أو مقص نظيف",
+                    "بشكل مستقيم بأي أداة متوفرة",
+                    "بدون قطع الساق نهائيًا",
+                    "قطع الساق بشكل متعرج"
+                ],
+                answer: 0,
+                chapter: 3
+            },
+            {
+                question: "لماذا يجب إزالة الأوراق من الجزء السفلي للساق؟",
+                options: [
+                    "لأنها إذا غمرت الماء ستتعفن وتلوث الماء",
+                    "لأنها تشوه منظر الزهرة",
+                    "لأنها تمتص الماء بسرعة كبيرة",
+                    "لأنها تسبب رائحة كريهة"
+                ],
+                answer: 0,
+                chapter: 3
+            },
+            {
+                question: "ما درجة حرارة الماء المناسبة للزهور؟",
+                options: [
+                    "20 درجة مئوية",
+                    "30 درجة مئوية",
+                    "40 درجة مئوية",
+                    "10 درجات مئوية"
+                ],
+                answer: 0,
+                chapter: 3
+            },
+            {
+                question: "ما الذي يجب تجنبه لحماية الزهور حسب النص؟",
+                options: [
+                    "أشعة الشمس المباشرة والبرد الشديد والحرارة القوية",
+                    "التهوية الجيدة",
+                    "الضوء الخافت",
+                    "الهواء النقي"
+                ],
+                answer: 0,
+                chapter: 3
+            }
+        ];
+
+        // --- Global Variables ---
+        // تهيئة EmailJS - استبدل هذه القيم بمعلومات حسابك الفعلية من لوحة تحكم EmailJS.
+        // يفضل استخدام متغيرات البيئة أو الواجهة الخلفية (Backend) لمعرفات الحساسة في التطبيقات الحقيقية.
+        const EMAILJS_USER_ID = "YOUR_USER_ID"; // استبدل بمعرف المستخدم الخاص بك في EmailJS
+        const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID"; // استبدل بمعرف الخدمة الخاص بك في EmailJS
+        const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID"; // استبدل بمعرف القالب الخاص بك في EmailJS
+
+        // API Key for Gemini - Leave empty as per instructions for gemini-2.0-flash
+        const API_KEY = ""; 
+
+        // تهيئة EmailJS
+        (function() {
+            emailjs.init(EMAILJS_USER_ID);
+        })();
+
+        // --- DOM Elements ---
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const questionsContainer = document.getElementById('questions-container');
+        const submitTestBtn = document.getElementById('submit-test-btn');
+        const resultContainer = document.getElementById('result-container');
+        
+        // LLM Feature DOM Elements
+        const summaryModal = document.getElementById('summaryModal');
+        const closeSummaryModalBtn = document.getElementById('closeSummaryModal');
+        const summaryContentDiv = document.getElementById('summaryContent');
+        const summaryLoadingDiv = document.getElementById('summaryLoading');
+        const practiceQuestionContainer = document.getElementById('practice-question-container');
+
+        let currentPracticeQuestion = null; // To store the generated practice question
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestions(); // Render questions when the page loads
+            addTabListeners(); // Attach event listeners to tab buttons
+            submitTestBtn.addEventListener('click', handleSubmitTest);
+
+            // Event listener for closing summary modal
+            closeSummaryModalBtn.addEventListener('click', () => {
+                summaryModal.style.display = 'none';
+            });
+
+            // Close modal if clicked outside content
+            window.addEventListener('click', (event) => {
+                if (event.target === summaryModal) {
+                    summaryModal.style.display = 'none';
+                }
+            });
+        });
+
+        function addTabListeners() {
+            tabButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const tabId = event.target.dataset.tab;
+                    openTab(tabId);
+                    // Clear practice question when changing tabs
+                    clearPracticeQuestion();
+                });
+            });
+        }
+
+        // --- Functions ---
+
+        /**
+         * Opens a specific tab and updates active styles.
+         * @param {string} tabId The ID of the tab content to show.
+         */
+        function openTab(tabId) {
+            tabContents.forEach(content => content.classList.remove('active'));
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+        }
+
+        /**
+         * Renders all questions into the questions container.
+         */
+        function renderQuestions() {
+            let html = '<h2 style="text-align: center; color: #2c3e50; margin-bottom: 25px;">أسئلة الاختبار</h2>';
+            
+            questions.forEach((q, index) => {
+                html += `
+                <div class="question-container">
+                    <h3>السؤال ${index + 1}: ${q.question}</h3>
+                    <div class="options" data-question-index="${index}">
+                `;
+                
+                q.options.forEach((option, optIndex) => {
+                    html += `
+                    <div class="option" data-option-index="${optIndex}">
+                        ${String.fromCharCode(1632 + optIndex + 1)}) ${option}
+                    </div>
+                    `;
+                });
+                
+                html += `</div></div>`;
+            });
+            
+            questionsContainer.innerHTML = html;
+            addOptionClickListeners(); // Add listeners after rendering
+        }
+
+        /**
+         * Attaches click listeners to all question options.
+         */
+        function addOptionClickListeners() {
+            document.querySelectorAll('.options .option').forEach(optionDiv => {
+                optionDiv.addEventListener('click', (event) => {
+                    const questionIndex = parseInt(event.target.closest('.options').dataset.questionIndex);
+                    const optionIndex = parseInt(event.target.dataset.optionIndex);
+                    selectOption(questionIndex, optionIndex);
+                });
+            });
+        }
+
+        /**
+         * Selects an option for a given question and updates UI.
+         * @param {number} qIndex The index of the question.
+         * @param {number} optIndex The index of the selected option.
+         */
+        function selectOption(qIndex, optIndex) {
+            const optionsContainer = document.querySelector(`.options[data-question-index="${qIndex}"]`);
+            if (optionsContainer) {
+                const options = optionsContainer.querySelectorAll('.option');
+                options.forEach(opt => opt.classList.remove('selected'));
+                options[optIndex].classList.add('selected');
+                questions[qIndex].selected = optIndex; // Save the selected answer
+            }
+        }
+
+        /**
+         * Handles the submission of the test.
+         */
+        function handleSubmitTest() {
+            const studentName = document.getElementById('student-name').value.trim();
+            const studentId = document.getElementById('student-id').value.trim();
+            const studentEmail = document.getElementById('student-email').value.trim();
+            
+            if (!studentName || !studentId) {
+                alert('الرجاء إدخال اسم الطالب ورقمه/معرفه قبل تقديم الاختبار.');
+                return;
+            }
+            
+            let answeredCount = 0;
+            questions.forEach(q => {
+                if (q.selected !== undefined) {
+                    answeredCount++;
+                }
+            });
+
+            if (answeredCount < questions.length) {
+                if (!confirm(`لقد أجبت على ${answeredCount} من أصل ${questions.length} أسئلة. هل أنت متأكد من رغبتك في تقديم الاختبار؟`)) {
+                    return;
+                }
+            }
+            
+            calculateAndDisplayResult(studentName, studentId, studentEmail);
+        }
+
+        /**
+         * Calculates the score and displays the result to the user.
+         * @param {string} studentName
+         * @param {string} studentId
+         * @param {string} studentEmail
+         */
+        function calculateAndDisplayResult(studentName, studentId, studentEmail) {
+            let score = 0;
+            questions.forEach(q => {
+                if (q.selected === q.answer) {
+                    score++;
+                }
+            });
+            
+            const totalQuestions = questions.length;
+            const percentage = Math.round((score / totalQuestions) * 100);
+            
+            let message = getFeedbackMessage(percentage);
+            
+            resultContainer.innerHTML = `
+                <h2>نتيجة الاختبار</h2>
+                <p><strong>اسم الطالب:</strong> ${studentName}</p>
+                <p><strong>رقم الطالب/المعرف:</strong> ${studentId}</p>
+                ${studentEmail ? `<p><strong>البريد الإلكتروني:</strong> ${studentEmail}</p>` : ''}
+                <p><strong>عدد الأسئلة:</strong> ${totalQuestions}</p>
+                <p><strong>الإجابات الصحيحة:</strong> ${score}</p>
+                <div class="score">${percentage}%</div>
+                <div class="feedback">${message}</div>
+                
+                <div class="send-section">
+                    <h3>إرسال النتيجة إلى المعلم</h3>
+                    <div class="teacher-info">
+                        <select id="teacher-select">
+                            <option value="">اختر المعلم</option>
+                            <option value="teacher1@example.com">أ. أحمد - معلم اللغة العربية</option>
+                            <option value="teacher2@example.com">أ. محمد - معلم العلوم</option>
+                            <option value="other">معلم آخر (حدد البريد أدناه)</option>
+                        </select>
+                        <input type="email" id="teacher-email" placeholder="أو أدخل البريد الإلكتروني للمعلم" style="display: none;">
+                    </div>
+                    <button class="send-btn" id="send-to-teacher-btn">إرسال النتيجة</button>
+                    <div class="send-status" id="send-status"></div>
+                </div>
+                
+                <button class="restart-btn" id="restart-test-btn">إعادة الاختبار</button>
+            `;
+            
+            resultContainer.style.display = 'block';
+            resultContainer.scrollIntoView({ behavior: 'smooth' });
+
+            // Add listeners for dynamically created elements
+            document.getElementById('restart-test-btn').addEventListener('click', restartTest);
+            document.getElementById('send-to-teacher-btn').addEventListener('click', sendToTeacher);
+            const dynamicTeacherSelect = document.getElementById('teacher-select');
+            const dynamicTeacherEmailInput = document.getElementById('teacher-email');
+
+            dynamicTeacherSelect.addEventListener('change', () => {
+                if (dynamicTeacherSelect.value === 'other') {
+                    dynamicTeacherEmailInput.style.display = 'block';
+                    dynamicTeacherEmailInput.focus();
+                } else {
+                    dynamicTeacherEmailInput.style.display = 'none';
+                    dynamicTeacherEmailInput.value = ''; // Clear previous input
+                }
+            });
+        }
+
+        /**
+         * Sends the test results to the teacher via EmailJS.
+         */
+        function sendToTeacher() {
+            const dynamicTeacherSelect = document.getElementById('teacher-select');
+            const dynamicTeacherEmailInput = document.getElementById('teacher-email');
+            const dynamicSendStatus = document.getElementById('send-status');
+
+            let teacherEmail = '';
+            if (dynamicTeacherSelect.value === 'other') {
+                teacherEmail = dynamicTeacherEmailInput.value.trim();
+            } else if (dynamicTeacherSelect.value) {
+                teacherEmail = dynamicTeacherSelect.value;
+            } else {
+                alert('الرجاء اختيار المعلم أو إدخال بريده الإلكتروني.');
+                return;
+            }
+            
+            if (!teacherEmail || !/\S+@\S+\.\S+/.test(teacherEmail)) { // Basic email validation
+                alert('الرجاء إدخال بريد إلكتروني صحيح للمعلم.');
+                return;
+            }
+
+            dynamicSendStatus.style.display = 'block';
+            dynamicSendStatus.className = 'send-status'; // Reset classes
+            dynamicSendStatus.textContent = 'جاري الإرسال...';
+            
+            const studentName = document.getElementById('student-name').value.trim();
+            const studentId = document.getElementById('student-id').value.trim();
+            const studentEmail = document.getElementById('student-email').value.trim();
+
+            let score = 0;
+            questions.forEach(q => {
+                if (q.selected === q.answer) {
+                    score++;
+                }
+            });
+            const totalQuestions = questions.length;
+            const percentage = Math.round((score / totalQuestions) * 100);
+
+            // Prepare template parameters for EmailJS
+            const templateParams = {
+                to_email: teacherEmail,
+                student_name: studentName,
+                student_id: studentId,
+                student_email: studentEmail || 'لا يوجد',
+                score: `${score} / ${totalQuestions}`,
+                percentage: `${percentage}%`,
+                feedback: getFeedbackMessage(percentage) 
+            };
+
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    dynamicSendStatus.textContent = 'تم إرسال النتيجة بنجاح!';
+                    dynamicSendStatus.classList.add('send-success');
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    dynamicSendStatus.textContent = 'فشل الإرسال. الرجاء المحاولة مرة أخرى.';
+                    dynamicSendStatus.classList.add('send-error');
+                });
+        }
+
+        /**
+         * Helper function to get feedback message based on percentage.
+         * @param {number} percentage The score percentage.
+         * @returns {string} The feedback message.
+         */
+        function getFeedbackMessage(percentage) {
+            if (percentage >= 90) {
+                return 'ممتاز! أداء رائع، لقد أظهرت فهمًا ممتازًا للنصوص.';
+            } else if (percentage >= 75) {
+                return 'جيد جدًا! لقد فهمت النصوص بشكل جيد.';
+            } else if (percentage >= 60) {
+                return 'جيد! يمكنك تحسين فهمك بالمزيد من الممارسة.';
+            } else if (percentage >= 50) {
+                return 'مقبول! تحتاج إلى مراجعة النصوص مرة أخرى.';
+            } else {
+                return 'يحتاج إلى تحسين! الرجاء مراجعة النصوص بعناية.';
+            }
+        }
+
+        /**
+         * Resets the test to its initial state.
+         */
+        function restartTest() {
+            // Clear student info
+            document.getElementById('student-name').value = '';
+            document.getElementById('student-id').value = '';
+            document.getElementById('student-email').value = '';
+
+            // Reset selected answers
+            questions.forEach(q => {
+                delete q.selected;
+            });
+
+            // Re-render questions to clear selections
+            renderQuestions();
+
+            // Hide result container
+            resultContainer.style.display = 'none';
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Activate the first tab
+            openTab('text1');
+            // Clear any practice questions
+            clearPracticeQuestion();
+        }
+
+        // --- LLM Powered Features ---
+
+        /**
+         * Handles the click event for generating a summary.
+         * Retrieves the text content of the specified tab and calls generateSummary.
+         * @param {string} tabId The ID of the tab (e.g., 'text1', 'text2').
+         */
+        function handleGenerateSummary(tabId) {
+            const chapterTextElement = document.getElementById(tabId).querySelector('.text-content');
+            // Extract text from paragraph tags, ignoring the h3 and button
+            const chapterText = Array.from(chapterTextElement.querySelectorAll('p'))
+                                   .map(p => p.innerText)
+                                   .join('\n\n');
+            
+            if (chapterText.trim() === '') {
+                summaryContentDiv.innerHTML = '<p style="color: red;">لا يوجد نص لتلخيصه في هذا الفصل.</p>';
+                summaryModal.style.display = 'block';
+                return;
+            }
+            generateSummary(chapterText);
+        }
+
+        /**
+         * Calls the Gemini API to generate a summary of the provided text.
+         * Displays the summary in a modal.
+         * @param {string} textToSummarize The text content to be summarized.
+         */
+        async function generateSummary(textToSummarize) {
+            summaryContentDiv.innerHTML = ''; // Clear previous content
+            summaryLoadingDiv.textContent = 'جاري تلخيص النص...'; // Set loading text
+            summaryLoadingDiv.style.display = 'block'; // Show loading
+            summaryModal.style.display = 'flex'; // Show modal as flex for centering
+
+            const prompt = `لخص النص العربي التالي في 3-5 جمل قصيرة: \n\n${textToSummarize}`;
+            const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    summaryContentDiv.innerHTML = `<p>${text}</p>`;
+                } else {
+                    summaryContentDiv.innerHTML = '<p style="color: red;">عذراً، لم أتمكن من تلخيص النص. حاول مرة أخرى.</p>';
+                }
+            } catch (error) {
+                console.error('Error generating summary:', error);
+                summaryContentDiv.innerHTML = '<p style="color: red;">حدث خطأ أثناء الاتصال بالخادم. الرجاء المحاولة لاحقاً.</p>';
+            } finally {
+                summaryLoadingDiv.style.display = 'none'; // Hide loading
+            }
+        }
+
+        /**
+         * Prompts the user to select a chapter for generating a practice question.
+         */
+        function promptForPracticeQuestionChapter() {
+            const activeTabId = document.querySelector('.tab-content.active').id;
+            const chapterTextElement = document.getElementById(activeTabId).querySelector('.text-content');
+            const chapterText = Array.from(chapterTextElement.querySelectorAll('p'))
+                                   .map(p => p.innerText)
+                                   .join('\n\n');
+
+            if (chapterText.trim() === '') {
+                practiceQuestionContainer.innerHTML = '<p style="color: red; text-align: center;">لا يوجد نص في الفصل الحالي لتوليد سؤال تدريبي منه.</p>';
+                practiceQuestionContainer.style.display = 'block';
+                return;
+            }
+
+            generatePracticeQuestion(chapterText);
+        }
+
+
+        /**
+         * Calls the Gemini API to generate a multiple-choice practice question from the provided text.
+         * @param {string} textToGenerateFrom The text content to generate a question from.
+         */
+        async function generatePracticeQuestion(textToGenerateFrom) {
+            practiceQuestionContainer.innerHTML = '<p style="text-align: center; color: #7f8c8d;">جاري توليد سؤال تدريبي...</p>';
+            practiceQuestionContainer.style.display = 'block';
+
+            const prompt = `من النص العربي التالي، قم بتوليد سؤال واحد للاختيار من متعدد مع 4 خيارات (يجب أن يكون كل خيار جملة قصيرة أو عبارة، وليس مجرد كلمة واحدة)، وقم بتحديد الإجابة الصحيحة. يجب أن يكون الإخراج كائن JSON بالصيغة التالية: {"question": "السؤال هنا", "options": ["خيار1", "خيار2", "خيار3", "خيار4"], "answer_index": 0 (فهرس الإجابة الصحيحة، يبدأ من 0).}.
+            مثال لإخراج JSON:
+            {"question": "ماذا كان يفعل الحصان في البراري قبل أن يجف العشب؟", "options": ["يرعى العشب ويشرب الماء ويعدو بحرية", "يجر العربات الثقيلة للمزارعين", "ينام طوال اليوم دون حركة", "يساعد الرجل في بناء الإسطبل"], "answer_index": 0}
+
+            النص: ${textToGenerateFrom}`;
+
+            const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = {
+                contents: chatHistory,
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "question": { "type": "STRING" },
+                            "options": {
+                                "type": "ARRAY",
+                                "items": { "type": "STRING" },
+                                "minItems": 4,
+                                "maxItems": 4
+                            },
+                            "answer_index": { "type": "NUMBER" }
+                        },
+                        "required": ["question", "options", "answer_index"]
+                    }
+                }
+            };
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const jsonString = result.candidates[0].content.parts[0].text;
+                    const parsedQuestion = JSON.parse(jsonString);
+
+                    if (parsedQuestion.question && parsedQuestion.options && parsedQuestion.options.length === 4 && typeof parsedQuestion.answer_index === 'number' && parsedQuestion.answer_index >= 0 && parsedQuestion.answer_index < 4) {
+                        currentPracticeQuestion = parsedQuestion;
+                        renderPracticeQuestion(parsedQuestion);
+                    } else {
+                        console.error("Invalid JSON structure or data:", parsedQuestion);
+                        practiceQuestionContainer.innerHTML = '<p style="color: red; text-align: center;">عذراً، لم أتمكن من توليد سؤال صالح. قد يكون التنسيق غير صحيح. حاول مرة أخرى.</p>';
+                    }
+                } else {
+                    practiceQuestionContainer.innerHTML = '<p style="color: red; text-align: center;">عذراً، لم أتمكن من توليد سؤال. حاول مرة أخرى.</p>';
+                }
+            } catch (error) {
+                console.error('Error generating practice question:', error);
+                practiceQuestionContainer.innerHTML = '<p style="color: red; text-align: center;">حدث خطأ أثناء الاتصال بالخادم أو تحليل البيانات. الرجاء المحاولة لاحقاً.</p>';
+            }
+        }
+
+        /**
+         * Renders the generated practice question to the UI.
+         * @param {object} q The question object (question, options, answer_index).
+         */
+        function renderPracticeQuestion(q) {
+            let html = `
+                <div class="question-container">
+                    <h3>سؤال تدريبي: ${q.question}</h3>
+                    <div class="options" data-practice-question="true">
+            `;
+            q.options.forEach((option, optIndex) => {
+                html += `
+                    <div class="option" data-practice-option-index="${optIndex}" onclick="checkPracticeAnswer(this, ${optIndex})">
+                        ${String.fromCharCode(1632 + optIndex + 1)}) ${option}
+                    </div>
+                `;
+            });
+            html += `
+                    </div>
+                    <div id="practice-feedback" style="margin-top: 15px; font-weight: bold; text-align: center;"></div>
+                </div>
+                <button class="submit-btn" style="margin-top: 20px;" onclick="clearPracticeQuestion()">إخفاء السؤال التدريبي</button>
+            `;
+            practiceQuestionContainer.innerHTML = html;
+        }
+
+        /**
+         * Checks the selected answer for the practice question and provides immediate feedback.
+         * @param {HTMLElement} selectedOptionDiv The div element of the selected option.
+         * @param {number} selectedOptIndex The index of the selected option.
+         */
+        function checkPracticeAnswer(selectedOptionDiv, selectedOptIndex) {
+            const feedbackDiv = document.getElementById('practice-feedback');
+            const optionsDivs = document.querySelectorAll('#practice-question-container .option');
+
+            // Disable further clicks on all options for this practice question
+            optionsDivs.forEach(opt => opt.onclick = null);
+
+            if (currentPracticeQuestion && selectedOptIndex === currentPracticeQuestion.answer_index) {
+                feedbackDiv.textContent = 'إجابة صحيحة! 🎉';
+                feedbackDiv.style.color = '#27ae60';
+                selectedOptionDiv.classList.add('correct-answer');
+            } else {
+                feedbackDiv.textContent = `إجابة خاطئة. الإجابة الصحيحة هي: ${currentPracticeQuestion.options[currentPracticeQuestion.answer_index]}`;
+                feedbackDiv.style.color = '#e74c3c';
+                selectedOptionDiv.classList.add('incorrect-answer');
+                // Highlight the correct answer
+                optionsDivs[currentPracticeQuestion.answer_index].classList.add('correct-answer');
+            }
+        }
+
+        /**
+         * Clears the displayed practice question.
+         */
+        function clearPracticeQuestion() {
+            practiceQuestionContainer.style.display = 'none';
+            practiceQuestionContainer.innerHTML = ''; // Clear content
+            currentPracticeQuestion = null;
+        }
+
+    </script>
+</body>
+</html>
